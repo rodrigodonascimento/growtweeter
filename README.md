@@ -1,3 +1,6 @@
+# Projeto Growtweeter
+Projeto desenvolvido no programa VestTech da Growdev para ajudar a fixar o conhecimento adquirido durante os módulos de Fundadmentos de Desenvolvimento back-end e  API's, Typescript e Desenvolvimento Web em ReactJs Básico, além de servir como modelo de um projeto desenvolvido em uma empresa do mercado de trabalho.
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
