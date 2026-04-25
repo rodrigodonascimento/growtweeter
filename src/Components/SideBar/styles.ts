@@ -1,7 +1,7 @@
-import styled from "styled-components";
 import { ButtonForm } from "../Login/styles";
 import { NavLink } from "react-router";
 import { ImageProfileContainer } from "../ProfileImage/styles";
+import styled from "styled-components";
 
 
 export const ContainerSideBar = styled.aside`
@@ -32,7 +32,7 @@ export const ContainerMenuItem = styled(NavLink)`
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #333333;
+    color: ${props => props.theme.colors.primaryTextColor};
     text-decoration: none;
 `;
 
@@ -50,7 +50,7 @@ export const ButtonThemes = styled.div`
 
     .icon {
         font-size: 20px;
-        fill: #333333;;
+        fill: ${props => props.theme.colors.primaryTextColor};
     }
 `;
 

@@ -16,14 +16,25 @@ export function FollowingBase() {
                 </ProfileWrapper>
                 <Wrapper>
                     <ProfileData>
-                        <ProfileName $name="Nome de Usuário" />
-                        <ProfileUsername $userName="@nomedousuario" />
+                        <ProfileName
+                            $name="Nome de Usuário"
+                        />
+                        <ProfileUsername
+                            $userName="@nomedousuario"
+                        />
                     </ProfileData>
                     <div>
-                        <TweetText />
+                        <TweetText
+                            $writeTweet="Esse é o novo Tweet Text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim, ligula nec tempus gravida, nulla massa vehicula purus, eget iaculis dui arcu ac quam. Aliquam ac lobortis justo."
+                        />
                     </div>
                     <div>
-                        <TweetReactions $showTrashIcon={false} $textReplay={"1.111"} $textLike={"1.111"} $textGraphLine={"215 mil"} />
+                        <TweetReactions
+                            $showTrashIcon={false}
+                            $textReplay={"1.111"}
+                            $textLike={"1.111"}
+                            $textGraphLine={"215 mil"}
+                        />
                     </div>
                 </Wrapper>
             </TweetWrapper>
@@ -34,14 +45,25 @@ export function FollowingBase() {
                 </ProfileWrapper>
                 <Wrapper>
                     <ProfileData>
-                        <ProfileName $name="Nome de Usuário" />
-                        <ProfileUsername $userName="@nomedousuario" />
+                        <ProfileName
+                            $name="Nome de Usuário"
+                        />
+                        <ProfileUsername
+                            $userName="@nomedousuario"
+                        />
                     </ProfileData>
                     <div>
-                        <TweetText />
+                        <TweetText
+                            $writeTweet="Esse é o novo Tweet Text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim, ligula nec tempus gravida, nulla massa vehicula purus, eget iaculis dui arcu ac quam. Aliquam ac lobortis justo."
+                        />
                     </div>
                     <div>
-                        <TweetReactions $showTrashIcon={false} $textReplay={"1.111"} $textLike={"1.111"} $textGraphLine={"215 mil"} />
+                        <TweetReactions
+                            $showTrashIcon={false}
+                            $textReplay={"1.111"}
+                            $textLike={"1.111"}
+                            $textGraphLine={"215 mil"}
+                        />
                     </div>
                 </Wrapper>
             </TweetWrapper>

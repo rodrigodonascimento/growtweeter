@@ -16,10 +16,5 @@ export const ImageFollowing = styled(SiPaloaltonetworks)`
     width: 37px;
     height: 37px;
     border-radius: 50%;
-    background-color: #E0E0E0;
-`;
-
-export const DescriptionTweet = styled.div`
-    /* display: flex; */
-    /* flex-direction: row; */
+    background-color: ${props => props.theme.colors.borderColor};
 `;

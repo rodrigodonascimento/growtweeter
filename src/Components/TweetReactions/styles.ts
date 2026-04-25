@@ -16,11 +16,16 @@ export const WrapperReactions = styled.div`
     display: flex;
     align-items: center;
     gap: 10px;
+    color: ${props => props.theme.colors.secondaryTextColor};
 `;
 
 export const ReactionReplay = styled(RxChatBubble)``;
 
-export const ReactionLike = styled(FaRegHeart)``;
+export const ReactionLike = styled(FaRegHeart)`
+    &:hover {
+        color: ${props => props.theme.colors.likeColor};
+    }
+`;
 
 export const ReactionGraphLine = styled(VscGraphLine)``;
 

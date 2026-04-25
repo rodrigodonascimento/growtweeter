@@ -29,29 +29,43 @@ export const WrapperBanner = styled.div`
 export const ProfileHeaderWrapper = styled.div`
     display: flex;
     flex-direction: column;
-    padding-left: 10px;
-    border-bottom: 1px solid #E0E0E0;
+    padding: 15px 10px;
+    border-bottom: ${props => props.theme.colors.borderColor};
 `;
 
 export const Sice = styled.div`
-    
+    display: flex;
+    align-items: center;
+    padding: 15px 0px;
+    gap: 3px;
 `;
 
 export const Calendar = styled(IoCalendarOutline)`
     width: 12px;
-    height: 10px;
+    height: ${props => props.theme.fonts.fontSize.smallText};
+    color: ${props => props.theme.colors.secondaryTextColor};
 `;
 
 export const TextSice = styled.span`
-    font-size: 10px;
-    color: #828282;
+    font-size: ${props => props.theme.fonts.fontSize.smallText};;
+    color: ${props => props.theme.colors.secondaryTextColor};
 `;
 
 export const Follows = styled.div`
-    font-size: 10px;
-    color: #828282;
+    font-size: ${props => props.theme.fonts.fontSize.smallText};;
+    color: ${props => props.theme.colors.secondaryTextColor};
+    display: flex;
+    gap: 20px;
+    padding-bottom: 20px;
 `;
 
+
+
 export const NumberSpan = styled.span`
+    font-weight: ${props => props.theme.fonts.fontWeight.extraBold};
+    margin-right: 3px;
+`;
+
+export const LabelFollows = styled.span`
     font-weight: 600;
 `;

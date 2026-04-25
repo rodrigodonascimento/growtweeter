@@ -5,12 +5,24 @@ interface NavLinkFeedProps {
     active?: boolean;
 }
 
-export const NavLinkFeed = styled(NavLink)<NavLinkFeedProps>`
+export const NavLinkFeed = styled(NavLink) <NavLinkFeedProps>`
     text-decoration: none;
-    color: #828282;
-    font-size: 14px;
+    color: ${props => props.theme.colors.primaryTextColor};
+    font-size: ${props => props.theme.fonts.fontSize.generalText};
+    position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: transparent;
+        bottom: -14px; 
+        transition: background-color 0.3s ease;
+    }
     
-    &.active {
-        border-bottom: ${(props) => (props ? '2px solid blue' : '2px solid transparent')};
+    &.active::after {
+        border-bottom: ${(props) => (props ? '2px solid #1D9BF0' : '2px solid transparent')};
     }
 `;

@@ -15,11 +15,10 @@ export const LineReplay = styled.div<LineReplayProps>`
     &::after {
         content: '';
         width: 2px;
-        background-color: #E0E0E0;
+        background-color: red;
         position: absolute;
         top: 50px;
-        /* bottom: -10px; */
-        height: calc(100% + 24px);
+        bottom: -10px;
         left: 50%;
         transform: translateX(-50%);
 

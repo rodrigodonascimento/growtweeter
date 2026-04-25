@@ -1,19 +1,23 @@
-import logo from '../../assets/logo_light.png';
-// import imgProfile from './../../assets/Rodrigo.jpeg';
 import { TbHome2 } from "react-icons/tb";
 import { FaHashtag } from 'react-icons/fa';
 import { FaRegUser } from "react-icons/fa6";
-import { BsMoonStarsFill } from "react-icons/bs";
-import { FaRegSun } from "react-icons/fa6";
+import logoLight from '../../assets/logo_light.png';
+import logoDark from '../../assets/logo_dark.png';
 import { ButtonExit, ButtonGrowTweetar, ButtonThemes, ContainerMenuItem, ContainerSideBar, NavSideBar, ProfileImageSideBar, ProfileSideBar, SideBarImage, WrapperInformation } from './styles';
 import { ProfileUsername } from '../ProfileUsername';
 import { ProfileName } from '../ProfileName';
 import { ProfileWrapper } from '../ProfileWrapper';
+import { ButtonTheme } from '../ButtonTheme';
+import { useTheme } from "styled-components";
+
+
 export function SideBar() {
+    const theme = useTheme();
+
     return (
         <ContainerSideBar>
             <NavSideBar>
-                <SideBarImage src={logo} alt="Logo Growtweet" />
+                <SideBarImage src={theme.title === 'light' ? logoLight : logoDark} alt="Logo Growtweet" />
                 <ContainerMenuItem to={''}>
                     <TbHome2 />
                     <span>Página Inicial</span>
@@ -30,8 +34,7 @@ export function SideBar() {
             </NavSideBar>
 
             <ButtonThemes>
-                <FaRegSun />
-                <BsMoonStarsFill />
+                <ButtonTheme />
             </ButtonThemes>
 
             <ProfileSideBar>
@@ -39,7 +42,7 @@ export function SideBar() {
                     <ProfileImageSideBar />
                     <WrapperInformation>
                         <ProfileName $name={'Rodrigo do Nascimento'}></ProfileName>
-                        <ProfileUsername $userName={'@perfil_growtweet'}/>
+                        <ProfileUsername $userName={'@perfil_growtweet'} />
                     </WrapperInformation>
                 </ProfileWrapper>
                 <ButtonExit>Sair</ButtonExit>

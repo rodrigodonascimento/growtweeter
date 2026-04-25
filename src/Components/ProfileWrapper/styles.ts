@@ -18,7 +18,6 @@ export const Wrapper = styled.div<LineReplayProps>`
         position: absolute;
         top: 50px;
         bottom: -10px;
-        /* height: calc(100% + 24px); */
         left: 50%;
         transform: translateX(-50%);
 

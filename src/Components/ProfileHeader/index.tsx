@@ -1,6 +1,6 @@
 import { HeaderBorderCard } from "../HeaderBorderCard";
 import { HeaderContainer } from "../HeaderContainer";
-import { ArrowReturn, Calendar, Follows, NumberSpan, ProfileHeaderWrapper, ProfileImageProfileHeader, QtdTweets, Sice, TextSice, WrapperBanner } from "./styles";
+import { ArrowReturn, Calendar, Follows, LabelFollows, NumberSpan, ProfileHeaderWrapper, ProfileImageProfileHeader, QtdTweets, Sice, TextSice, WrapperBanner } from "./styles";
 import { HeaderCard } from "../HeaderCard";
 import { HeaderTitle } from "../HeaderTitle";
 import { ProfileName } from "../ProfileName";
@@ -33,15 +33,15 @@ export function ProfileHeader() {
                 <Follows>
                     <div>
                         <NumberSpan>55</NumberSpan>
-                        <span>Seguindo</span>
+                        <LabelFollows>Seguindo</LabelFollows>
                     </div>
                     <div>
                         <NumberSpan>55</NumberSpan>
-                        <span>Seguidores</span>
+                        <LabelFollows>Seguidores</LabelFollows>
                     </div>
                 </Follows>
                 <FeedNav>
-                    <FeedNavLink route={"tweets"} title={"Tweets"} />
+                    <FeedNavLink route={""} title={"Tweets"} end/>
                     <FeedNavLink route={"replies"} title={"Respostas"} />
                     <FeedNavLink route={"media"} title={"Mídia"} />
                     <FeedNavLink route={"likes"} title={"Curtidas"} />
