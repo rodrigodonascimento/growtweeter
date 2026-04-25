@@ -11,5 +11,6 @@ export default createGlobalStyle`
         font-family: "Karla", sans-serif;
         overflow-y: hidden;
         height: 100vh;
+        background-color: ${props => props.theme.colors.backgroundColor};
     }
 `;

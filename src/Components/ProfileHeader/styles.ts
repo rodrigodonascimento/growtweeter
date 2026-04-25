@@ -4,11 +4,17 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import { ImageProfileContainer } from "../ProfileImage/styles";
 import { IoCalendarOutline } from "react-icons/io5";
 
+export const ProfileHeaderBorderCard = styled.div`
+    border: none;
+`;
+
 export const QtdTweets = styled(Information)`
     margin-top: -10px;
 `;
 
-export const ArrowReturn = styled(FaArrowLeftLong)``;
+export const ArrowReturn = styled(FaArrowLeftLong)`
+    color: ${props => props.theme.colors.primaryTextColor};
+`;
 
 export const ProfileImageProfileHeader = styled(ImageProfileContainer)`
     width: 90px;

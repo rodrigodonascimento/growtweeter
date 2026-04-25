@@ -55,7 +55,7 @@ export const routes = createBrowserRouter([
                 element: <Profile />,
                 children: [
                     {
-                        path: 'tweets',
+                        index: true,
                         element: <Tweets />
                     },
                     {

@@ -1,6 +1,5 @@
-import { HeaderBorderCard } from "../HeaderBorderCard";
 import { HeaderContainer } from "../HeaderContainer";
-import { ArrowReturn, Calendar, Follows, LabelFollows, NumberSpan, ProfileHeaderWrapper, ProfileImageProfileHeader, QtdTweets, Sice, TextSice, WrapperBanner } from "./styles";
+import { ArrowReturn, Calendar, Follows, LabelFollows, NumberSpan, ProfileHeaderBorderCard, ProfileHeaderWrapper, ProfileImageProfileHeader, QtdTweets, Sice, TextSice, WrapperBanner } from "./styles";
 import { HeaderCard } from "../HeaderCard";
 import { HeaderTitle } from "../HeaderTitle";
 import { ProfileName } from "../ProfileName";
@@ -13,13 +12,13 @@ import { FeedNavLink } from "../FeedNavLink";
 export function ProfileHeader() {
     return (
         <HeaderContainer>
-            <HeaderBorderCard>
+            <ProfileHeaderBorderCard>
                 <HeaderCard>
                     <HeaderTitle title="Perfil de @RodrigodoNascimento" />
                     <QtdTweets>7 weeks</QtdTweets>
                     <ArrowReturn />
                 </HeaderCard>
-            </HeaderBorderCard>
+            </ProfileHeaderBorderCard>
             <WrapperBanner>
                     <ProfileImageProfileHeader />
             </WrapperBanner>

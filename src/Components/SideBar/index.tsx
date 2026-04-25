@@ -9,10 +9,13 @@ import { ProfileName } from '../ProfileName';
 import { ProfileWrapper } from '../ProfileWrapper';
 import { ButtonTheme } from '../ButtonTheme';
 import { useTheme } from "styled-components";
+import { useState } from "react";
+import { ModalComposer } from "../ModalComposer";
 
 
 export function SideBar() {
     const theme = useTheme();
+    const [isPostOpen, setIsPostOpen] = useState(false);
 
     return (
         <ContainerSideBar>
@@ -30,7 +33,15 @@ export function SideBar() {
                     <FaRegUser />
                     <span>Perfil</span>
                 </ContainerMenuItem>
-                <ButtonGrowTweetar>Growtweetar</ButtonGrowTweetar>
+                <ButtonGrowTweetar onClick={() => setIsPostOpen(true)}>Growtweetar</ButtonGrowTweetar>
+                <ModalComposer 
+                    isOpen={isPostOpen}
+                    onClose={() => setIsPostOpen(false)}
+                    buttonLabel="Growtweetar"
+                    onSubmit={async (text) => {
+                        await alert('formulário enviado' + text);
+                    }}
+                />
             </NavSideBar>
 
             <ButtonThemes>
