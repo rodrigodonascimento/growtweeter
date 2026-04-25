@@ -1,7 +1,7 @@
-import { ButtonForm } from "../Login/styles";
 import { NavLink } from "react-router";
 import { ImageProfileContainer } from "../ProfileImage/styles";
 import styled from "styled-components";
+import { ButtonForm } from "./../Login/styles";
 
 
 export const ContainerSideBar = styled.aside`
