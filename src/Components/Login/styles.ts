@@ -1,5 +1,4 @@
-import { Link } from "react-router";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 export const ContainerLogin = styled.div`
     width: 100vw;
@@ -56,12 +55,40 @@ export const LabelFormLogin = styled.label`
     font-size: 14px;
 `;
 
+export const InputContainer = styled.div`
+    position: relative;
+    width: 100%;
+`;
+
+export const ToggleButton = styled.button`
+    position: absolute;
+    right: 10px;
+    top: -6%;
+    transform: translateY(50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: #626161;
+    
+    svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    &:hover {
+        color: #1D9BF0;
+    }
+`;
+
 export const InputFormLogin = styled.input`
     padding: 8px 4px;
     border-radius: 8px;
     border: 1px solid #dddddd;
     outline: none;
     margin-bottom: 8px;
+    width: 100%;
 `;
 
 export const ButtonForm = styled.button`
@@ -80,6 +107,20 @@ export const HasAnAccount = styled.p`
     color: #888888;
 `;
 
-export const LinkCreateAccount = styled(Link)`
+export const LinkCreateAccount = styled.a`
     font-size: 14px;
+    cursor: pointer;
+    padding-top: 8px;
+`;
+
+const rotate = keyframes`
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+`;
+
+export const LoadingIcon = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: ${rotate} 1s linear infinite;
 `;

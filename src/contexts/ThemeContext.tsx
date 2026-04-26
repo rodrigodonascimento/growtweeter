@@ -12,7 +12,10 @@ interface ThemeContextInterface {
 const ThemeContext = createContext<ThemeContextInterface>({} as ThemeContextInterface);
 
 export const ThemeContextProvider = ({ children }: { children: React.ReactNode }) => {
-    const [themeTitle, setThemeTitle] = useState<'light' | 'dark'>('light');
+    const [themeTitle, setThemeTitle] = useState<'light' | 'dark'>(() => {
+        const savedTheme = localStorage.getItem("@Growtweeter:theme");
+        return (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : 'light';
+    });
 
     const toggleTheme = () => {
         setThemeTitle(prev => (prev === 'light' ? 'dark' : 'light'));

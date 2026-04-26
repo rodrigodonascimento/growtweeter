@@ -15,7 +15,7 @@ export function ModalComposer({ isOpen, onClose, onSubmit, buttonLabel, placehol
     const [text, setText] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const handleAction = async (e: React.SubmitEvent) => {
+    const handleAction = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
 

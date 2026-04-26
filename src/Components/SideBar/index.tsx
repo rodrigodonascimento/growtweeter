@@ -11,11 +11,20 @@ import { ButtonTheme } from '../ButtonTheme';
 import { useTheme } from "styled-components";
 import { useState } from "react";
 import { ModalComposer } from "../ModalComposer";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router";
 
 
 export function SideBar() {
+    const {signOut} = useAuth();
+    const navigate = useNavigate();
     const theme = useTheme();
     const [isPostOpen, setIsPostOpen] = useState(false);
+
+    function handleLogout() {
+        signOut();
+        navigate('/login');
+    }
 
     return (
         <ContainerSideBar>
@@ -39,7 +48,7 @@ export function SideBar() {
                     onClose={() => setIsPostOpen(false)}
                     buttonLabel="Growtweetar"
                     onSubmit={async (text) => {
-                        await alert('formulário enviado' + text);
+                        await alert('formulário enviado: ' + text);
                     }}
                 />
             </NavSideBar>
@@ -56,7 +65,7 @@ export function SideBar() {
                         <ProfileUsername $userName={'@perfil_growtweet'} />
                     </WrapperInformation>
                 </ProfileWrapper>
-                <ButtonExit>Sair</ButtonExit>
+                <ButtonExit onClick={handleLogout}>Sair</ButtonExit>
             </ProfileSideBar>
         </ContainerSideBar>
     );
