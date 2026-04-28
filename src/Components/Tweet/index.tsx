@@ -1,4 +1,6 @@
 
+import type { TweetInterface } from "../../types/tweets";
+import { formatRelativeDate } from "../../utils/formatDate";
 import { ProfileImage } from "../ProfileImage";
 import { ProfileName } from "../ProfileName";
 import { ProfileUsername } from "../ProfileUsername";
@@ -9,45 +11,56 @@ import { TweetWrapper } from "../TweetWrapper";
 import { VerifieldBadge } from "../VerifiedBadge";
 import { ProfileData, Wrapper } from "./styles";
 
-export function Tweet() {
+interface TweetProps {
+    tweetData: TweetInterface;
+    isReply: boolean;
+}
+
+export function Tweet({ tweetData, isReply = false }: TweetProps) {
+    const formattedDate = formatRelativeDate(tweetData.createdAt);
+
+    // Verifica se o tweet deve mostar a linha vertical se reply
+    const showVerticalLine = isReply || (tweetData.replies && tweetData.replies.length > 0);
+
     return (
         <>
-            <TweetWrapper noBorder>
-                <ProfileWrapper $hasReplay>
-                    <ProfileImage />
+            <TweetWrapper noBorder={showVerticalLine}>
+                <ProfileWrapper $hasReplay={showVerticalLine}>
+                    <ProfileImage $urlImage={tweetData.author?.imageUrl} />
                 </ProfileWrapper>
                 <Wrapper>
                     <ProfileData>
-                        <ProfileName $name={"Nome do usuário"} />
-                        <VerifieldBadge></VerifieldBadge>
-                        <ProfileUsername $userName={"@nomedousuario"} $dateCreated={" • 8 de abr"}></ProfileUsername>
+                        <ProfileName $name={tweetData.author?.name} />
+                        <VerifieldBadge />
+                        <ProfileUsername
+                            $userName={`@${tweetData.author?.name}`}
+                            $dateCreated={` • ${formattedDate}`}
+                        />
                     </ProfileData>
-                    <div>
-                        <TweetText $writeTweet="Esse é o novo Tweet Text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim, ligula nec tempus gravida, nulla massa vehicula purus, eget iaculis dui arcu ac quam. Aliquam ac lobortis justo." />
-                    </div>
-                    <div>
-                        <TweetReactions $showTrashIcon $textReplay={"1"} $textLike={"10"} $textGraphLine={"1.500"}></TweetReactions>
-                    </div>
+                    <TweetText $writeTweet={tweetData.content} />
+                    <TweetReactions
+                        tweetId={tweetData.id}
+                        authorId={tweetData.author.id}
+                        likes={tweetData.likes}
+                        $textReplay={tweetData.replies?.length.toString() || '0'}
+                        $textGraphLine={"1.500"} content={""}                    />
                 </Wrapper>
             </TweetWrapper>
-            <TweetWrapper noBorder={false}>
-                <ProfileWrapper>
-                    <ProfileImage />
-                </ProfileWrapper>
-                <Wrapper>
-                    <ProfileData>
-                        <ProfileName $name={"Nome do usuário"} />
-                        <VerifieldBadge></VerifieldBadge>
-                        <ProfileUsername $userName={"@nomedousuario"} $dateCreated={" • 8 de abr"}></ProfileUsername>
-                    </ProfileData>
-                    <div>
-                        <TweetText $writeTweet="Esse é o novo Tweet Text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim, ligula nec tempus gravida, nulla massa vehicula purus, eget iaculis dui arcu ac quam. Aliquam ac lobortis justo." />
-                    </div>
-                    <div>
-                        <TweetReactions $showTrashIcon $textReplay={"1"} $textLike={"10"} $textGraphLine={"1.500"}></TweetReactions>
-                    </div>
-                </Wrapper>
-            </TweetWrapper>
+            {tweetData.replies && tweetData.replies.length > 0 && (
+                <div className="replies-container">
+                    {tweetData.replies.map((reply, index) => {
+                        const isLastReply = index === tweetData.replies.length - 1;
+
+                        return (
+                            <Tweet
+                                key={reply.id}
+                                tweetData={reply}
+                                isReply={!isLastReply}
+                            />
+                        );
+                    })}
+                </div>
+            )}
         </>
     );
 }

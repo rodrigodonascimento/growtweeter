@@ -10,8 +10,10 @@ export const ContainerSideBar = styled.aside`
     align-items: center;
     justify-content: space-between;
     margin-top: 19px;
-    width: 15%;
-    height: 97vh;
+    width: 275px;
+    height: 100vh;
+    padding: 0 20px;
+    margin-left: 0;
 `;
 
 export const SideBarImage = styled.img`

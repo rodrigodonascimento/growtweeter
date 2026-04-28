@@ -18,7 +18,9 @@ export const ThemeContextProvider = ({ children }: { children: React.ReactNode }
     });
 
     const toggleTheme = () => {
-        setThemeTitle(prev => (prev === 'light' ? 'dark' : 'light'));
+        const newTheme = themeTitle === 'light' ? 'dark' : 'light'
+        setThemeTitle(newTheme);
+        localStorage.setItem("@Growtweeter:theme", newTheme);
     };
 
     const currentTheme = {

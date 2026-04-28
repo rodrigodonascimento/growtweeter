@@ -5,8 +5,10 @@ export async function login(credentials: LoginCredentialsInterface): Promise<Aut
     try {
         const response = await api.post<AuthResponseInterface>('/auth/login', credentials);
         return response.data;
-    } catch (error) {
-        console.error("Erro ao fazer login: " + error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg = error.reponse?.data?.message
+        console.error("Erro ao fazer login: " + msg);
         throw error;
     }
 }
@@ -19,6 +21,18 @@ export async function signUpService(dataRegister: RegisterUserInterface): Promis
     } catch (error: any) {
         const msg = error.response?.data?.message || error.message;
         console.error("Erro ao criar usuário: " + msg);
+        throw error;
+    }
+}
+
+export async function getUserById(id: string) {
+    try {
+        const response = await api.get(`/users/${id}`);
+        return response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg = error.response?.data?.messege || error.message;
+        console.error("Erro ao buscar usuário", msg);
         throw error;
     }
 }

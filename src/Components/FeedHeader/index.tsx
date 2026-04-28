@@ -17,6 +17,7 @@ export function FeedHeader() {
                     <FeedNav>
                         <FeedNavLink route={""} title={"Para Você"}></FeedNavLink>
                         <FeedNavLink route={"following"} title={"Seguindo"}></FeedNavLink>
+                        <FeedNavLink route={"explore-users"} title={"Descobrir"} />
                     </FeedNav>
                 </HeaderCard>
             </HeaderBorderCard>

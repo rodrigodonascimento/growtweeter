@@ -1,8 +1,9 @@
+import { ContainerSideBar } from "../../components/SideBar/styles";
 import { CardInformation, CardRightSide, Information, InformationItem, InfromationTopic, MoreInformation, TitleRightSide } from "./styles";
 
 export function RightSideMenu() {
     return (
-        <aside>
+        <ContainerSideBar>
             <CardRightSide>
                 <TitleRightSide>O que está acontecendo?</TitleRightSide>
                 <CardInformation>
@@ -27,6 +28,6 @@ export function RightSideMenu() {
                     <MoreInformation to={'explore'}>Mostrar mais</MoreInformation>
                 </div>
             </CardRightSide>
-        </aside>
+        </ContainerSideBar>
     );
 }

@@ -1,6 +1,6 @@
-import { createContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useEffect, useState, type ReactNode } from "react";
 import type { LoginCredentialsInterface, RegisterUserInterface, UserInterface } from "../types/auth";
-import { login, signUpService } from './../services/auth.service';
+import { getUserById, login, signUpService } from './../services/auth.service';
 import { useContext } from "react";
 import { api } from './../services/api';
 
@@ -22,37 +22,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<UserInterface | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    const refreshUserData = useCallback(async (id: string, token: string) => {
+        try {
+            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            const response = await getUserById(id);
+            const fullUserData = response.data?.data || response.data || response;
+            setUser(fullUserData);
+            localStorage.setItem("@Growtweeter:user", JSON.stringify(fullUserData));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+            console.error("Erro ao sincornizar perfil", error);
+        }
+    }, []);
+
     useEffect(() => {
         const savedUser = localStorage.getItem("@Growtweeter:user");
         const savedToken = localStorage.getItem("@Growtweeter:token");
 
         if (savedUser && savedToken) {
+            const parsedUser = JSON.parse(savedUser);
             // eslint-disable-next-line react-hooks/set-state-in-effect
-            setUser(JSON.parse(savedUser));
+            setUser(parsedUser);
             setToken(savedToken);
-            api.defaults.headers.common['Authorization'] = `Bearer ${savedToken}`;
+            refreshUserData(parsedUser.id, savedToken);
         }
         setIsLoading(false);
-    }, []);
+    }, [refreshUserData]);
 
     const signIn = async (credentials: LoginCredentialsInterface) => {
         try {
             const response = await login(credentials);
 
-            const aUser = response.data?.authUser;
-            const aToken = response.data?.authToken;
+            const {authUser, authToken} = response.data;
 
-            if (!aUser || !aToken) {
-                console.log("Token ou User não encontrados na resposta da API");
-                return;
-            }
+            if (!authUser || !authToken) return;
 
-            setUser(aUser);
-            setToken(aToken);
-            api.defaults.headers.common['Authorization'] = `Bearer ${aToken}`;
+            setUser(authUser);
+            setToken(authToken);
+            api.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
 
-            localStorage.setItem("@Growtweeter:user", JSON.stringify(aUser));
-            localStorage.setItem("@Growtweeter:token", aToken)
+            localStorage.setItem("@Growtweeter:user", JSON.stringify(authUser));
+            localStorage.setItem("@Growtweeter:token", authToken);
+            refreshUserData(authUser.id, authToken);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             const msg = error.response?.data?.message || error.message;

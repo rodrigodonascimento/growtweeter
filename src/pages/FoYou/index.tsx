@@ -1,9 +1,7 @@
-import { Tweet } from "../../components/Tweet";
+import { TweetsLlist } from "../../components/TweetsLlist";
 
 export function FoYou() {
     return (
-        <>
-            <Tweet />
-        </>
+        <TweetsLlist />
     );
 }

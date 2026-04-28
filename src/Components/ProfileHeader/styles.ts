@@ -17,19 +17,21 @@ export const ArrowReturn = styled(FaArrowLeftLong)`
 `;
 
 export const ProfileImageProfileHeader = styled(ImageProfileContainer)`
-    width: 90px;
-    height: 90px;
+    width: 120px;
+    height: 120px;
     position: absolute;
-    bottom: -45px;
-    left: 12px;
+    bottom: -60px;
+    left: 15px;
+    border: ${props => props.theme.colors.borderColor};
 `;
 
 export const WrapperBanner = styled.div`
     width: 100%;
-    height: 132px;
+    height: 150px;
     background-color: #1d9bf0;
     position: relative;
     margin-bottom: 48px;
+    flex-shrink: 0;
 `;
 
 export const ProfileHeaderWrapper = styled.div`
@@ -74,4 +76,15 @@ export const NumberSpan = styled.span`
 
 export const LabelFollows = styled.span`
     font-weight: 600;
+`;
+
+export const ButtonFollow = styled.button`
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    color: ${props => props.theme.colors.backgroundColor};
+    background-color: ${props => props.theme.colors.btnPrimary};
+    height: 36px;
+    border: ${props => props.theme.colors.borderColor};
 `;

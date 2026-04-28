@@ -3,6 +3,7 @@ export interface UserInterface {
     name: string;
     username: string;
     imageUrl?: string;
+    createdAt?: string;
 }
 
 export interface AuthResponseInterface {

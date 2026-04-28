@@ -4,6 +4,7 @@ import { FaRegHeart } from "react-icons/fa6";
 import { VscGraphLine } from "react-icons/vsc";
 import { GoTrash } from "react-icons/go";
 import { FaArrowUpFromBracket } from "react-icons/fa6";
+import { ImPencil2 } from "react-icons/im";
 
 export const ContainerReactions = styled.div`
     display: flex;
@@ -22,6 +23,7 @@ export const WrapperReactions = styled.div`
 export const ReactionReplay = styled(RxChatBubble)``;
 
 export const ReactionLike = styled(FaRegHeart)`
+    cursor: pointer;
     &:hover {
         color: ${props => props.theme.colors.likeColor};
     }
@@ -29,7 +31,13 @@ export const ReactionLike = styled(FaRegHeart)`
 
 export const ReactionGraphLine = styled(VscGraphLine)``;
 
-export const ReactionTrash = styled(GoTrash)``;
+export const ReactionTrash = styled(GoTrash)`
+    cursor: pointer;
+`;
 
 export const ReactionArrowForm = styled(FaArrowUpFromBracket)``;
+
+export const ReactionPencil = styled(ImPencil2)`
+    cursor: pointer;
+`;
 

@@ -13,10 +13,13 @@ import { useState } from "react";
 import { ModalComposer } from "../ModalComposer";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router";
-
+import { useTweets } from "../../contexts/TweetContext";
+import { createTweet } from "../../services/tweet.service";
+import { ProfileImage } from "../ProfileImage";
 
 export function SideBar() {
-    const {signOut} = useAuth();
+    const { user, signOut } = useAuth();
+    const {addTweet} = useTweets();
     const navigate = useNavigate();
     const theme = useTheme();
     const [isPostOpen, setIsPostOpen] = useState(false);
@@ -24,6 +27,32 @@ export function SideBar() {
     function handleLogout() {
         signOut();
         navigate('/login');
+    }
+
+    async function handleCreateTweet(text: string) {
+        try {
+            const response = await createTweet({ content: text });
+
+            const tweetWhitAuthor = {
+                ...response.data,
+                author: response.data.author || {
+                    name: user?.name,
+                    username: user?.username,
+                    imageUrl: user?.imageUrl
+                },
+                replies: response.data.replies || [],
+                likes: response.data.likes || []
+            }
+
+            addTweet(tweetWhitAuthor);
+            setIsPostOpen(false);
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+            const msg = error.response?.data?.message || "Erro ao publicar o tweet";
+            console.error(msg);
+            throw error;
+        }
     }
 
     return (
@@ -43,13 +72,11 @@ export function SideBar() {
                     <span>Perfil</span>
                 </ContainerMenuItem>
                 <ButtonGrowTweetar onClick={() => setIsPostOpen(true)}>Growtweetar</ButtonGrowTweetar>
-                <ModalComposer 
+                <ModalComposer
                     isOpen={isPostOpen}
                     onClose={() => setIsPostOpen(false)}
                     buttonLabel="Growtweetar"
-                    onSubmit={async (text) => {
-                        await alert('formulário enviado: ' + text);
-                    }}
+                    onSubmit={handleCreateTweet}
                 />
             </NavSideBar>
 
@@ -59,10 +86,12 @@ export function SideBar() {
 
             <ProfileSideBar>
                 <ProfileWrapper>
-                    <ProfileImageSideBar />
+                    <ProfileImageSideBar>
+                        <ProfileImage $urlImage={user?.imageUrl} />
+                    </ProfileImageSideBar>
                     <WrapperInformation>
-                        <ProfileName $name={'Rodrigo do Nascimento'}></ProfileName>
-                        <ProfileUsername $userName={'@perfil_growtweet'} />
+                        <ProfileName $name={user?.name || 'Usuário'}></ProfileName>
+                        <ProfileUsername $userName={`@${user?.username}`} />
                     </WrapperInformation>
                 </ProfileWrapper>
                 <ButtonExit onClick={handleLogout}>Sair</ButtonExit>

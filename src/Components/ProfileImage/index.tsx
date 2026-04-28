@@ -1,7 +1,13 @@
 import { ImageProfileContainer } from "./styles";
 
-export function ProfileImage() {
+interface ProfileImageProps {
+    $urlImage?: string;
+}
+
+export function ProfileImage({$urlImage}: ProfileImageProps) {
+    const isValidUrl = $urlImage && $urlImage.trim().length > 10;
+    const fallback = 'https://twing.com';
     return (
-        <ImageProfileContainer />
+        <ImageProfileContainer $urlImage={isValidUrl ? $urlImage : fallback} />
     );
 }

@@ -1,17 +1,18 @@
 import { createBrowserRouter, Navigate } from "react-router";
 import { DefaultLayout } from "./layouts/DefaultLayout";
 import { Sigin } from "./pages/Signin";
-import { Feed } from "./pages/Feed";
 import { FoYou } from "./pages/FoYou";
 import { Explorer } from "./pages/Explorer";
 import { Following } from "./pages/Following";
 import { Topics } from "./pages/Topics";
-import { Profile } from "./pages/Profile";
-import { Tweets } from "./pages/Tweets";
 import { Replies } from "./pages/Replies";
 import { Media } from "./pages/Media";
 import { Likes } from "./pages/Likes";
 import { ProtectedRouter } from "./components/ProtectedRouter";
+import { FeedHeader } from "./components/FeedHeader";
+import { ProfileHeader } from "./components/ProfileHeader";
+import { MyTweets } from './components/MyTweets/index';
+import { ExploreUsers } from "./components/ExplorerUsers";
 
 export const routes = createBrowserRouter([
     {
@@ -28,11 +29,15 @@ export const routes = createBrowserRouter([
         children: [
             {
                 path: '',
-                element: <Feed />,
+                element: <FeedHeader />,
                 children: [
                     {
                         index: true,
                         element: <FoYou />
+                    },
+                    {
+                        path: 'explore-users',
+                        element: <ExploreUsers />
                     },
                     {
                         path: 'following',
@@ -51,12 +56,12 @@ export const routes = createBrowserRouter([
                 ]
             },
             {
-                path: 'profile',
-                element: <Profile />,
+                path: 'profile/:userId?',
+                element: <ProfileHeader />,
                 children: [
                     {
                         index: true,
-                        element: <Tweets />
+                        element: <MyTweets />
                     },
                     {
                         path: 'replies',

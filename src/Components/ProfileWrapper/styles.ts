@@ -20,6 +20,7 @@ export const Wrapper = styled.div<LineReplayProps>`
         bottom: -10px;
         left: 50%;
         transform: translateX(-50%);
+        height: calc(100% - 30px);
 
         display: ${props => props.$hasReply ? 'block' : 'none'};
     }

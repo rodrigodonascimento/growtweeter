@@ -43,7 +43,11 @@ export function ModalComposerSignup({ isOpen, onClose, onSubmit }: ModalComposer
         setLoding(true);
 
         try {
-            await onSubmit(formData);
+            const dataToSubmit = {...formData};
+            if (!dataToSubmit.imageUrl.trim()) {
+                delete (dataToSubmit as any) .imageUrl
+            }
+            await onSubmit(dataToSubmit);
             setformData({ name: '', username: '', password: '', imageUrl: '' });
             onClose();
         } catch (error) {
