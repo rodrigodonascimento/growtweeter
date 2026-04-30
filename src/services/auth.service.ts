@@ -1,38 +1,14 @@
-import type { AuthResponseInterface, LoginCredentialsInterface, RegisterResponseInterface, RegisterUserInterface } from "../types/auth";
+import type { LoginResponse, LoginCredentialsInterface, RegisterResponseInterface, RegisterUserInterface } from "../types/auth";
 import { api } from "./api";
 
-export async function login(credentials: LoginCredentialsInterface): Promise<AuthResponseInterface> {
-    try {
-        const response = await api.post<AuthResponseInterface>('/auth/login', credentials);
+export const authService = {
+    signIr: async (credentials: LoginCredentialsInterface): Promise<LoginResponse> => {
+        const response = await api.post<LoginResponse>('/auth/login', credentials);
         return response.data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-        const msg = error.reponse?.data?.message
-        console.error("Erro ao fazer login: " + msg);
-        throw error;
-    }
-}
+    },
 
-export async function signUpService(dataRegister: RegisterUserInterface): Promise<RegisterResponseInterface> {
-    try {
+    register: async (dataRegister: RegisterUserInterface): Promise<RegisterResponseInterface> => {
         const response = await api.post<RegisterResponseInterface>('/auth/register', dataRegister);
         return response.data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-        const msg = error.response?.data?.message || error.message;
-        console.error("Erro ao criar usuário: " + msg);
-        throw error;
-    }
-}
-
-export async function getUserById(id: string) {
-    try {
-        const response = await api.get(`/users/${id}`);
-        return response.data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-        const msg = error.response?.data?.messege || error.message;
-        console.error("Erro ao buscar usuário", msg);
-        throw error;
     }
 }

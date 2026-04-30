@@ -1,6 +1,6 @@
 import { createContext, useCallback, useEffect, useState, type ReactNode } from "react";
 import type { LoginCredentialsInterface, RegisterUserInterface, UserInterface } from "../types/auth";
-import { getUserById, login, signUpService } from './../services/auth.service';
+import { login, signUpService } from './../services/auth.service';
 import { useContext } from "react";
 import { api } from './../services/api';
 
@@ -26,10 +26,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             const response = await getUserById(id);
-            const fullUserData = response.data?.data || response.data || response;
+            const fullUserData = response || null;
             setUser(fullUserData);
             localStorage.setItem("@Growtweeter:user", JSON.stringify(fullUserData));
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error("Erro ao sincornizar perfil", error);
         }
@@ -53,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             const response = await login(credentials);
 
-            const {authUser, authToken} = response.data;
+            const { authUser, authToken } = response.data;
 
             if (!authUser || !authToken) return;
 
@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             localStorage.setItem("@Growtweeter:user", JSON.stringify(authUser));
             localStorage.setItem("@Growtweeter:token", authToken);
             refreshUserData(authUser.id, authToken);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             const msg = error.response?.data?.message || error.message;
             console.error("Erro ao logar: " + msg);
@@ -110,3 +110,7 @@ export const useAuth = () => {
     }
     return context;
 };
+
+function getUserById(id: string) {
+    throw new Error("Function not implemented.");
+}

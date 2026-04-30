@@ -59,7 +59,7 @@ export const ButtonThemes = styled.div`
 export const Teste = styled.svg
 
 export const ProfileSideBar = styled.div`
-    margin-bottom: 15px;
+    margin-bottom: 25px;
     text-align: center;
 `;
 

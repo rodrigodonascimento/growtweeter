@@ -67,8 +67,6 @@ export const Follows = styled.div`
     padding-bottom: 20px;
 `;
 
-
-
 export const NumberSpan = styled.span`
     font-weight: ${props => props.theme.fonts.fontWeight.extraBold};
     margin-right: 3px;

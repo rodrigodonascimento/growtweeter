@@ -1,13 +1,14 @@
-import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import type { TweetInterface } from "../types/tweets";
 import { useAuth } from "./AuthContext";
-import { deleteLikeService, deleteTweetService, toggleLikeService } from "../services/tweet.service";
-import { api } from "../services/api";
-import { followUser, unfollowUser } from "../services/follower.service";
+import { deleteLikeService, deleteTweetService, getTweetsByUser, getTweetsFromFollowedUsers, toggleLikeService, updateMyTweet } from "../services/tweet.service";
+import { followUser, getMyFollows, unfollowUser } from "../services/follower.service";
 
 interface TweetContextData {
     tweets: TweetInterface[];
     loading: boolean;
+    followersCount: number;
+    followingCount: number;
     loadTweets: () => Promise<void>;
     addTweet: (newTweet: TweetInterface) => void;
     addReply: (tweetId: string, newReply: TweetInterface) => void;
@@ -16,6 +17,7 @@ interface TweetContextData {
     follow: (id: string) => Promise<void>;
     unfollow: (id: string) => Promise<void>;
     updateTweet: (id: string, newContent: string) => Promise<void>;
+    getFollowings: (token: string) => Promise<void>;
 
 }
 
@@ -25,6 +27,8 @@ export const TweetContext = createContext<TweetContextData>({} as TweetContextDa
 export function TweetProvider({ children }: { children: ReactNode }) {
     const [tweets, setTweets] = useState<TweetInterface[]>([]);
     const [loading, setLoading] = useState(false);
+    const [followersCount, setFollowersCount] = useState(0);
+    const [followingCount, setFollowingCount] = useState(0);
     const { user } = useAuth();
 
     const loadTweets = useCallback(async () => {
@@ -32,8 +36,8 @@ export function TweetProvider({ children }: { children: ReactNode }) {
         setLoading(true);
         try {
             const [feedResponse, myTweetResponse] = await Promise.all([
-                api.get('/feed'),
-                api.get(`/users/${user.id}/tweets`)
+                getTweetsFromFollowedUsers(),
+                getTweetsByUser(user?.id)
             ]);
 
             const feedList = feedResponse.data.data || feedResponse.data;
@@ -46,6 +50,7 @@ export function TweetProvider({ children }: { children: ReactNode }) {
             const sortedTweets = uniqueTweets.sort((a, b) =>
                 new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
             );
+
             setTweets(sortedTweets);
         } catch (error) {
             console.error("Falha ao buscar tweets: " + error);
@@ -86,7 +91,6 @@ export function TweetProvider({ children }: { children: ReactNode }) {
                 await toggleLikeService(tweetId);
             }
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error("Erro ao curtir tweet ", error);
         }
@@ -97,7 +101,6 @@ export function TweetProvider({ children }: { children: ReactNode }) {
             await deleteTweetService(tweetId);
             setTweets(prev => removeTweetRecusrive(prev, tweetId));
             alert("Tweet excluído com sucesso!");
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error("Erro ao deletar tweet", error);
             alert("Não foi possível excluir o tweet");
@@ -107,7 +110,7 @@ export function TweetProvider({ children }: { children: ReactNode }) {
     const follow = async (userId: string) => {
         try {
             await followUser(userId);
-            // Após seguir, recarregamos o feed para os tweets dele aparecerem
+            await getFollowings(); // Atualiza os contadores
             await loadTweets();
         } catch (error) {
             console.error("Erro ao seguir usuário", error);
@@ -117,19 +120,38 @@ export function TweetProvider({ children }: { children: ReactNode }) {
     const unfollow = async (userId: string) => {
         try {
             await unfollowUser(userId);
+            await getFollowings(); // Atualiza os contadores
             await loadTweets();
         } catch (error) {
             console.error("Erro ao deixar de seguir", error);
         }
     };
 
+    const getFollowings = useCallback(async () => {
+        const token = localStorage.getItem("@Growtweeter:token");
+
+        // Se não houver token, não faz a chamada
+        if (!token) return;
+
+        try {
+            const response = await getMyFollows(token);
+
+            // Verifique se a estrutura bate com sua interface FollowresInterface
+            if (response.success && response.data) {
+                setFollowersCount(response.data.followers.length);
+                setFollowingCount(response.data.followings.length);
+            }
+        } catch (error) {
+            console.error("Erro ao buscar os seguidores", error);
+        }
+    }, []);
+
     const updateTweet = async (id: string, newContent: string) => {
         try {
-            await api.put(`/tweets/${id}`, { content: newContent });
+            await updateMyTweet(id, { content: newContent });
             setTweets(prev => prev.map(tweet => {
                 return updateContentRecursive(tweet, id, newContent);
             }));
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
             alert("Erro ao editar");
         }
@@ -183,12 +205,25 @@ export function TweetProvider({ children }: { children: ReactNode }) {
         return tweet;
     }
 
+    useEffect(() => {
+        if (user?.id) {
+            getFollowings();
+            loadTweets();
+        }
+    }, [user?.id, loadTweets, getFollowings]);
+
     return (
-        <TweetContext.Provider value={{ tweets, loading, loadTweets, addTweet, addReply, toggleLike, deleteTweet, follow, unfollow, updateTweet }}>
+        <TweetContext.Provider value={{ tweets, loading, loadTweets, addTweet, addReply, toggleLike, deleteTweet, follow, unfollow, updateTweet, getFollowings, followersCount, followingCount }}>
             {children}
         </TweetContext.Provider>
     );
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const useTweets = () => useContext(TweetContext);
+export function useTweets() {
+    const context = useContext(TweetContext);
+    if (!context) {
+        throw new Error("useTweets deve ser usado dentro de um TweetProvider");
+    }
+    return context;
+}

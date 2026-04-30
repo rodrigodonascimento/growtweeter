@@ -1,23 +1,24 @@
+import type { CustomResponseApi } from "./customResponseApi";
+
 export interface UserInterface {
     id: string;
     name: string;
     username: string;
     imageUrl?: string;
     createdAt?: string;
-}
-
-export interface AuthResponseInterface {
-    success: string;
-    message: string;
-    data: {
-        authUser: UserInterface;
-        authToken: string;
-    }
+    updatedAt?: string;
 }
 
 export interface LoginCredentialsInterface {
     username: string;
     password: string;
+}
+
+export interface LoginResponse extends CustomResponseApi {
+    data: {
+        authToken: string;
+        authUser: UserInterface;
+    }
 }
 
 export interface RegisterUserInterface {
@@ -27,15 +28,6 @@ export interface RegisterUserInterface {
     imageUrl?: string;
 }
 
-export interface RegisterResponseInterface {
-    success: string;
-    message: string;
-    data: {
-        id: string;
-        name: string;
-        imageUrl: string;
-        username: string;
-        createdAt: string;
-        updatedAt: string;
-    }
+export interface RegisterResponseInterface extends CustomResponseApi {
+    data: UserInterface
 }

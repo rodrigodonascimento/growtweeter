@@ -1,3 +1,52 @@
+import type { UserInterface } from "./auth";
+import type { CustomResponseApi } from "./customResponseApi";
+
+export interface CreateTweetInput {
+    content: string;
+}
+
+export interface CreateTweetResponse extends CustomResponseApi {
+    data: {
+        id: string;
+        content: string;
+        type: "NORMAL" | "REPLY";
+        createdAt: string;
+        updatedAt: string;
+    }
+}
+
+export interface CreateReplyInput {
+    content: string;
+    replyTo: string;
+}
+
+export interface TweetById {
+    id: string;
+}
+
+export interface TweetByIdResponse extends CustomResponseApi {
+    data: [
+        {
+            id: string;
+            content: string;
+            type: 'NORMAL';
+            createdAt: string;
+            updatedAt: string;
+            author: UserInterface,
+            replies: [];
+            likes: []
+        }
+    ]
+}
+export interface CreateReplyResponse extends CustomResponseApi {
+    data: {
+        id: string
+        content: string;
+        type: 'REPLY';
+        createdAt: string;
+        updatedAt: string;
+    }
+}
 export interface AuthorInterface {
     id: string;
     name: string;
@@ -31,11 +80,5 @@ export interface TweetInterface {
     likes: LikeInterface[];
 }
 
-export interface CreateTweetData {
-    content: string;
-}
 
-export interface ReplyData {
-    content: string;
-    replyTo: string;
-}
+
