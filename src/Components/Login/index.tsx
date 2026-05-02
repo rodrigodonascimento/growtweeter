@@ -4,7 +4,7 @@ import { ButtonForm, CardLogin, CardLoginForm, CardWelcome, ContainerLogin, Form
 import { RxEyeClosed } from "react-icons/rx";
 import { PiEye } from "react-icons/pi";
 import { ImSpinner9 } from "react-icons/im";
-import { ModalComposerSignup } from './../ModalComposerSignup/index';
+import { ModalComposerSignup } from '../ModalComposerSignup/index';
 import type { RegisterUserInterface } from "../../types/auth";
 import { useAuth } from "../../hooks/useAuth";
 
