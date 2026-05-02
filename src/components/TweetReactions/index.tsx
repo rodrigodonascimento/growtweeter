@@ -17,7 +17,7 @@ interface TweetReactionsProps {
     onLike?: () => void;
     onUnlike?: () => void;
     onDelete?: () => void;
-    onReply?: () => void;
+    onAddReply?: (newReply: TweetInterface) => void;
     onEdit?: () => void;
     onUpdate?: (updateTweet: TweetInterface) => void;
 }
