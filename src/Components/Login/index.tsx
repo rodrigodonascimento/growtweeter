@@ -27,11 +27,9 @@ export function Login() {
         setLoading(true);
         try {
             await signIn({ username, password });
-console.log("Login ok, tentando navegar...");
             window.location.replace('/');
              
         } catch (error: any) {
-            // alert("Erro ao entrar. Verifique suas credenciais.");
             console.error("Erro detalhado:", error.response?.data || error.message);
             alert(error.response?.data?.message || "Erro ao entrar.");
         } finally {
