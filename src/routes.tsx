@@ -5,14 +5,14 @@ import { FoYou } from "./pages/FoYou";
 import { Explorer } from "./pages/Explorer";
 import { Following } from "./pages/Following";
 import { Topics } from "./pages/Topics";
-import { Replies } from "./pages/Replies";
-import { Media } from "./pages/Media";
 import { Likes } from "./pages/Likes";
 import { ProtectedRouter } from "./components/ProtectedRouter";
-import { FeedHeader } from "./components/FeedHeader";
 import { ProfileHeader } from "./components/ProfileHeader";
 import { MyTweets } from './components/MyTweets/index';
 import { ExploreUsers } from "./components/ExplorerUsers";
+import { Replies } from "./pages/Replies";
+import { Media } from "./pages/Media";
+import { FeedHeader } from "./components/FeedHeader";
 
 export const routes = createBrowserRouter([
     {
