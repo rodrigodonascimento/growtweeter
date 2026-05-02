@@ -11,15 +11,13 @@ import { ButtonTheme } from '../ButtonTheme';
 import { useTheme } from "styled-components";
 import { useState } from "react";
 import { ModalComposer } from "../ModalComposer";
-import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router";
-import { useTweets } from "../../contexts/TweetContext";
-import { createTweet } from "../../services/tweet.service";
 import { ProfileImage } from "../ProfileImage";
+import { useAuth } from "../../hooks/useAuth";
+import { tweetService } from "../../services/tweet.service";
 
 export function SideBar() {
-    const { user, signOut } = useAuth();
-    const {addTweet} = useTweets();
+    const { user, token, signOut } = useAuth();
     const navigate = useNavigate();
     const theme = useTheme();
     const [isPostOpen, setIsPostOpen] = useState(false);
@@ -31,20 +29,21 @@ export function SideBar() {
 
     async function handleCreateTweet(text: string) {
         try {
-            const response = await createTweet({ content: text });
+            if (!user || ! token) return;
+            const response = await tweetService.createTweet({ content: text }, token);
 
             const tweetWhitAuthor = {
                 ...response.data,
-                author: response.data.author || {
+                author: response.data || {
                     name: user?.name,
                     username: user?.username,
                     imageUrl: user?.imageUrl
                 },
-                replies: response.data.replies || [],
-                likes: response.data.likes || []
+                replies: response.data || [],
+                likes: response.data || []
             }
 
-            addTweet(tweetWhitAuthor);
+            tweetService.createTweet(tweetWhitAuthor, token);
             setIsPostOpen(false);
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any

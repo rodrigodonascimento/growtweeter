@@ -6,6 +6,9 @@ export interface AllusersResponse extends CustomResponseApi {
     data: UserInterface[];
 }
 
+export interface UserByIdInput {
+    id: string;
+}
 export interface UserByIdResponse extends CustomResponseApi {
     data: {
         id: string;

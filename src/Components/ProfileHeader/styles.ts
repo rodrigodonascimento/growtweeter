@@ -41,6 +41,11 @@ export const ProfileHeaderWrapper = styled.div`
     border-bottom: ${props => props.theme.colors.borderColor};
 `;
 
+export const ProfileCardIdentification = styled.div`
+    display: flex;
+    justify-content: space-between;
+`;
+
 export const Sice = styled.div`
     display: flex;
     align-items: center;

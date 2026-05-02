@@ -1,21 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useTweets } from "../../hooks/useTweets";
 import { Tweet } from "../Tweet";
-import { useTweets } from "../../contexts/TweetContext";
 import { useEffect } from "react";
+import { ContainerTweetList } from "./styled";
 
 export function TweetsLlist() {
-    const { tweets, loading, loadTweets } = useTweets();
+    const { tweets, isLoadingTweets, fetchFeed } = useTweets();
 
     useEffect(() => {
-        loadTweets(); 
-    }, [loadTweets]);
+        fetchFeed(); 
+    }, [fetchFeed]);
 
-    if (loading && tweets.length === 0) {
+    if (isLoadingTweets && tweets.length === 0) {
         return <p>Carregando tweets...</p>;
     }
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+        <ContainerTweetList className='Lista-da-aba-Para-Voce'>
             {tweets?.map((t) => (
                 <Tweet
                     key={t.id}
@@ -23,6 +24,6 @@ export function TweetsLlist() {
                     isReply={(t.replies?.length ?? 0) > 0}
                 />
             ))}
-        </div>
+        </ContainerTweetList>
     );
 }

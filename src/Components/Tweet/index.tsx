@@ -1,4 +1,5 @@
 
+import { useTweets } from "../../hooks/useTweets";
 import type { TweetInterface } from "../../types/tweets";
 import { formatRelativeDate } from "../../utils/formatDate";
 import { ProfileImage } from "../ProfileImage";
@@ -14,13 +15,23 @@ import { ProfileData, Wrapper } from "./styles";
 interface TweetProps {
     tweetData: TweetInterface;
     isReply: boolean;
+    onLike?: () => void;
+    onUnlike?: () => void;
+    onDelete?: () => void;
+    onUpdate?: (updatedTweet: TweetInterface) => void;
+    onAddReply?: (tweetId: string, newReply: TweetInterface) => void;
 }
 
-export function Tweet({ tweetData, isReply = false }: TweetProps) {
+export function Tweet({ tweetData, isReply = false, onDelete, onUpdate, onAddReply, onLike, onUnlike }: TweetProps) {
+    const { likeTweet, unlikeTweet } = useTweets();
+
     const formattedDate = formatRelativeDate(tweetData.createdAt);
 
     // Verifica se o tweet deve mostar a linha vertical se reply
     const showVerticalLine = isReply || (tweetData.replies && tweetData.replies.length > 0);
+
+    const localLike = () => likeTweet(tweetData.id);
+    const localUnlike = () => unlikeTweet(tweetData.id);
 
     return (
         <>
@@ -33,7 +44,7 @@ export function Tweet({ tweetData, isReply = false }: TweetProps) {
                         <ProfileName $name={tweetData.author?.name} />
                         <VerifieldBadge />
                         <ProfileUsername
-                            $userName={`@${tweetData.author?.name}`}
+                            $userName={`@${tweetData.author?.username}`}
                             $dateCreated={` • ${formattedDate}`}
                         />
                     </ProfileData>
@@ -42,8 +53,17 @@ export function Tweet({ tweetData, isReply = false }: TweetProps) {
                         tweetId={tweetData.id}
                         authorId={tweetData.author.id}
                         likes={tweetData.likes}
+                        // onLike={onLike}
+                        // onUnlike={onUnlike}
+                        onDelete={onDelete}
+                        onUpdate={onUpdate}
+                        content={tweetData.content}
                         $textReplay={tweetData.replies?.length.toString() || '0'}
-                        $textGraphLine={"1.500"} content={""}                    />
+                        $textGraphLine={"1.500"}
+                        onLike={onLike || localLike} // Usa a prop ou a local
+                        onUnlike={onUnlike || localUnlike}
+                        onAddReply={(newReply: TweetInterface) => onAddReply?.(tweetData.id, newReply)} 
+                        $textLike={""}                    />
                 </Wrapper>
             </TweetWrapper>
             {tweetData.replies && tweetData.replies.length > 0 && (
@@ -56,6 +76,11 @@ export function Tweet({ tweetData, isReply = false }: TweetProps) {
                                 key={reply.id}
                                 tweetData={reply}
                                 isReply={!isLastReply}
+                                onLike={onLike}
+                                onUnlike={onUnlike}
+                                onDelete={onDelete}
+                                onUpdate={onUpdate}
+                                onAddReply={onAddReply}
                             />
                         );
                     })}

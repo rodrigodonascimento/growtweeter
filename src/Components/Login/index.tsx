@@ -5,8 +5,9 @@ import { RxEyeClosed } from "react-icons/rx";
 import { PiEye } from "react-icons/pi";
 import { ImSpinner9 } from "react-icons/im";
 import { ModalComposerSignup } from './../ModalComposerSignup/index';
-import { useAuth } from "../../contexts/AuthContext";
 import type { RegisterUserInterface } from "../../types/auth";
+import { authService } from './../../services/auth.service';
+import { useAuth } from "../../hooks/useAuth";
 
 export function Login() {
     const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -14,11 +15,11 @@ export function Login() {
 
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const { signUp } = useAuth();
-    const { signIn } = useAuth();
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+
+    const { signIn, signUp } = useAuth();
 
     const togglePassword = () => setShowPassword(!showPassword);
 
@@ -27,7 +28,8 @@ export function Login() {
         setLoading(true);
         try {
             await signIn({ username, password });
-            navigate('/');
+console.log("Login ok, tentando navegar...");
+            window.location.replace('/');
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             // alert("Erro ao entrar. Verifique suas credenciais.");
@@ -41,6 +43,7 @@ export function Login() {
     async function handleSignUpSubmit(dataRegister: RegisterUserInterface) {
         try {
             await signUp(dataRegister);
+            navigate('/login');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             const msg = error.response?.data?.message || "Erro ao cadastrar.";

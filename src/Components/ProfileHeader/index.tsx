@@ -1,71 +1,85 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import { useTweets } from "../../contexts/TweetContext";
-import { getMyFollows } from "../../services/follower.service";
 import type { UserInterface } from "../../types/auth";
 import { HeaderContainer } from "../HeaderContainer";
-import { ArrowReturn, ButtonFollow, Calendar, Follows, LabelFollows, NumberSpan, ProfileHeaderBorderCard, ProfileHeaderWrapper, ProfileImageProfileHeader, QtdTweets, Sice, TextSice, WrapperBanner } from "./styles";
+import { ArrowReturn, ButtonFollow, Calendar, Follows, LabelFollows, NumberSpan, ProfileCardIdentification, ProfileHeaderBorderCard, ProfileHeaderWrapper, ProfileImageProfileHeader, QtdTweets, Sice, TextSice, WrapperBanner } from "./styles";
 import { HeaderCard } from "../HeaderCard";
 import { HeaderTitle } from "../HeaderTitle";
 import { ProfileName } from "../ProfileName";
 import { ProfileUsername } from "../ProfileUsername";
 import { FeedNav } from "../FeedNav";
 import { FeedNavLink } from "../FeedNavLink";
-import { getUserById } from "../../services/user.service";
+import { useAuth } from "../../hooks/useAuth";
+import { useTweets } from "../../hooks/useTweets";
+import { userService } from "../../services/user.service";
+import { followService, tweetService } from "../../services/tweet.service";
 // Importe seus estilos abaixo...
 
 export function ProfileHeader() {
     const { userId } = useParams(); // ID da URL (ex: /profile/123)
     const navigate = useNavigate();
     const { user: loggedUser, token } = useAuth(); // Você logado
-    const { tweets, follow, unfollow, getFollowings , followersCount, followingCount } = useTweets();
-    const [stats, setStats] = useState({ followers: 0, following: 0 });
+    const { tweets } = useTweets();
 
-    // Estado para o usuário que estamos vendo no perfil
+    // Estado local para dados de terceiros
+    const [stats, setStats] = useState({ followers: 0, following: 0 });
     const [profileUser, setProfileUser] = useState<UserInterface | null>(null);
     const [isFollowing, setIsFollowing] = useState(false);
+    const [tweetsCount, setTweetsCount] = useState(0);
 
-    // 1. Lógica para definir QUEM estamos vendo
+    const isNotMe = !!(userId && userId !== loggedUser?.id);
+
     useEffect(() => {
         const idToFetch = userId || loggedUser?.id;
 
-        if (idToFetch) {
-            // Busca dados completos (foto, nome, etc) do dono do perfil
-            getUserById(idToFetch).then(data => {
-                const userData = data.user;
-                const followers = data.followers || [];
-                const following  = data.following || [];
-                setProfileUser(userData);
-            });
-        }
+        if (!idToFetch || !token) return;
 
-        // 2. Se for perfil de outro, verifica se eu já sigo
-        if (userId && userId !== loggedUser?.id) {
-            
-            getMyFollows(token).then(res => {
-                const followingList = res.data.followings || [];
+        // Busca dados do perfil que estamos visitando
+        userService.getById(idToFetch, token).then(res => {
+            const userData = res.data;
+            setProfileUser(userData as unknown as UserInterface);
+
+            // Se for perfil de outro, usamos stats local
+            if (isNotMe) {
                 setStats({
-                    followers: res.data.followers?.length || 0,
-                    following: res.data.followings?.length || 0
-                })
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                setIsFollowing(followingList.some((f: any) => f.id === userId));
+                    followers: userData.followers?.length || 0,
+                    following: userData.following?.length || 0
+                });
+            }
+        });
+
+        // Busca os tweets apenas para saber a quantidade (Performance!)
+        tweetService.tweetsUser(idToFetch, token).then(res => {
+            setTweetsCount(res?.data?.length || 0); // Pega o length do array retornado
+        }).catch(err => {
+            console.error("Erro ao contar tweets:", err);
+            setTweetsCount(0);
+        });;
+
+        // Se for perfil de outro, verifica se usuário logado segue
+        if (isNotMe) {
+            followService.getMyFollows(token).then(res => {
+                const myFollowingList = res.data.followings || [];
+                setIsFollowing(myFollowingList.some(f => f.id === userId));
             });
         }
-    }, [userId, loggedUser, getFollowings, token]);
+    }, [userId, loggedUser?.id, token, isNotMe]);
 
-    // 3. Funções do botão
     const handleFollowClick = async () => {
-        if (!userId) return;
-        if (isFollowing) {
-            await unfollow(userId);
-            setIsFollowing(false);
-            setStats(prev => ({ ...prev, followers: prev.followers - 1 }));
-        } else {
-            await follow(userId);
-            setIsFollowing(true);
-            setStats(prev => ({ ...prev, followers: prev.followers + 1 }));
+        const targetId = profileUser?.id;
+        if (!targetId || !token) return;
+        try {
+            if (isFollowing) {
+                await followService.unfollow(targetId, token);
+                setIsFollowing(false);
+                setStats(prev => ({ ...prev, followers: Math.max(0, prev.followers - 1) }));
+            } else {
+                await followService.follow(targetId, token);
+                setIsFollowing(true);
+                setStats(prev => ({ ...prev, followers: prev.followers + 1 }));
+            }
+        } catch (error) {
+            console.error("Erro ao seguir/deseguir", error);
         }
     };
 
@@ -73,15 +87,16 @@ export function ProfileHeader() {
         navigate(-1);
     }
 
-    const isNotMe = userId && userId !== loggedUser?.id;
-    const userTweetsCount = tweets.filter(t => t.author.id === profileUser?.id).length;
+    // Número de seguindo e seguidores dinâmica
+    const displayFollowing = isNotMe ? stats.following : (loggedUser as any)?.following?.length || 0;
+    const displayFollowers = isNotMe ? stats.followers : (loggedUser as any)?.followers?.length || 0;
 
     return (
         <HeaderContainer>
             <ProfileHeaderBorderCard>
                 <HeaderCard>
                     <HeaderTitle title={profileUser?.name || "Carregando..."} />
-                    <QtdTweets>{userTweetsCount} Tweets</QtdTweets>
+                    <QtdTweets>{tweetsCount} Tweets</QtdTweets>
                     <ArrowReturn onClick={handleReturn} />
                 </HeaderCard>
             </ProfileHeaderBorderCard>
@@ -91,7 +106,7 @@ export function ProfileHeader() {
             </WrapperBanner>
 
             <ProfileHeaderWrapper>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <ProfileCardIdentification>
                     <div>
                         <ProfileName $name={profileUser?.name || ""} />
                         <ProfileUsername $userName={`@${profileUser?.username || ""}`} />
@@ -104,7 +119,7 @@ export function ProfileHeader() {
                             {isFollowing ? "Seguindo" : "Seguir"}
                         </ButtonFollow>
                     )}
-                </div>
+                </ProfileCardIdentification>
 
                 <Sice>
                     <Calendar />
@@ -112,8 +127,8 @@ export function ProfileHeader() {
                 </Sice>
 
                 <Follows>
-                    <div><NumberSpan>{isNotMe ? stats.following : followingCount}</NumberSpan><LabelFollows>Seguindo</LabelFollows></div>
-                    <div><NumberSpan>{isNotMe ? stats.followers : followersCount}</NumberSpan><LabelFollows>Seguidores</LabelFollows></div>
+                    <div><NumberSpan>{displayFollowing}</NumberSpan><LabelFollows>Seguindo</LabelFollows></div>
+                    <div><NumberSpan>{displayFollowers}</NumberSpan><LabelFollows>Seguidores</LabelFollows></div>
                 </Follows>
 
                 <FeedNav>

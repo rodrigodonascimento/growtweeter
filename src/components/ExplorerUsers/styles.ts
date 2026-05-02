@@ -5,7 +5,7 @@ export const ExplorerUsersContainer = styled.div`
     flex-direction: column;
 `;
 
-export const LintToProfileUser = styled.div`
+export const LinkToProfileUser = styled.div`
     display: flex;
     align-items: center;
     gap: 10px;

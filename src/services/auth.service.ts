@@ -2,7 +2,7 @@ import type { LoginResponse, LoginCredentialsInterface, RegisterResponseInterfac
 import { api } from "./api";
 
 export const authService = {
-    signIr: async (credentials: LoginCredentialsInterface): Promise<LoginResponse> => {
+    signIn: async (credentials: LoginCredentialsInterface): Promise<LoginResponse> => {
         const response = await api.post<LoginResponse>('/auth/login', credentials);
         return response.data;
     },

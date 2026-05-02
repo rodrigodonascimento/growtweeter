@@ -1,4 +1,3 @@
-import type { AuthResponseInterface } from "../types/auth";
 import type { FollowresInterface } from "../types/follows";
 import { api } from "./api";
 

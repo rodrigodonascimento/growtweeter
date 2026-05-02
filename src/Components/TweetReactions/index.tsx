@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { ContainerReactions, ReactionArrowForm, ReactionGraphLine, ReactionLike, ReactionPencil, ReactionReplay, ReactionTrash, WrapperReactions } from "./styles";
 import { ModalComposer } from "../ModalComposer";
-import { useTweets } from "../../contexts/TweetContext";
-import { useAuth } from "../../contexts/AuthContext";
-import { createReply } from "../../services/tweet.service";
-import type { LikeInterface } from "../../types/tweets";
+import type { LikeInterface, TweetInterface } from "../../types/tweets";
+import { useAuth } from "../../hooks/useAuth";
+import { tweetService } from "../../services/tweet.service";
 
 interface TweetReactionsProps {
     tweetId: string;
@@ -12,41 +11,51 @@ interface TweetReactionsProps {
     content: string;
     likes: LikeInterface[];
     $textReplay: string;
+    $textLike: string;
+    $showTrashIcon?:boolean;
     $textGraphLine: string;
+    onLike?: () => void;
+    onUnlike?: () => void;
+    onDelete?: () => void;
+    onReply?: () => void;
+    onEdit?: () => void;
+    onUpdate?: (updateTweet: TweetInterface) => void;
+    onAddReply?: (newReply: TweetInterface) => void;
 }
 
-export function TweetReactions({ tweetId, authorId, content, likes, $textReplay, $textGraphLine }: TweetReactionsProps) {
-    const [isReplayOpen, setIsReplayOpen] = useState(false);
-    const { addReply, toggleLike, deleteTweet, updateTweet } = useTweets();
-    const { user } = useAuth();
+export function TweetReactions({ tweetId, authorId, content, likes, $textReplay, $textGraphLine, onUpdate, onLike, onUnlike, onDelete, onAddReply }: TweetReactionsProps) {
 
+    const { user, token } = useAuth();
     const isLiked = likes?.some(like => like.author?.id === user?.id);
+    const [isReplayOpen, setIsReplayOpen] = useState(false);
+
+    const handleLikeClick = () => {
+        if (isLiked) {
+            onUnlike?.();
+        } else {
+            onLike?.();
+        }
+    }
 
     // Só mostra icone de lixeira se tweet do usuario
     const isMyTweet = user?.id === authorId;
 
     async function handleSendReply(text: string) {
+        if (!token || !user) return;
         try {
             // Envia para a API
-            const response = await createReply({
-                content: text, replyTo: tweetId
-            });
-
-            // Objeto completo para evitar a quebra do Feed
-            const fullReply = {
-                ...response.data,
-                author: {
-                    id: user?.id,
-                    name: user?.name,
-                    username: user?.username,
-                    imageUrl: user?.imageUrl
-                },
+            const response = await tweetService.createReply({ content: text, replyTo: tweetId }, token);
+            const newReply: TweetInterface = {
+                id: response.data.id,
+                content: text,
+                type: 'REPLY',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                author: user,
                 replies: [],
                 likes: []
-            };
-
-            // Atualiação do estado global
-            addReply(tweetId, fullReply);
+            }
+            onAddReply?.(newReply);
             setIsReplayOpen(false);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
@@ -58,16 +67,21 @@ export function TweetReactions({ tweetId, authorId, content, likes, $textReplay,
 
 
     const handleEdit = async () => {
+        if (!token) return;
         const newText = prompt("Edite seu post:", content);
-        // Se o usuário não cancelar e o texto for diferente do original
         if (newText && newText !== content) {
-            await updateTweet(tweetId, newText);
+            try {
+                const res = await tweetService.tweetUpdate(tweetId, newText, token);
+                onUpdate?.(res.data);
+            } catch {
+                alert("Erro ao atualizar tweet")
+            }
         }
     };
 
     async function handleDelete() {
         if (window.confirm("Tem certeza que deseja excluir este tweet?")) {
-            await deleteTweet(tweetId);
+            onDelete?.();
         }
     }
 
@@ -83,11 +97,12 @@ export function TweetReactions({ tweetId, authorId, content, likes, $textReplay,
                 onClose={() => setIsReplayOpen(false)}
                 buttonLabel="Responder"
                 placeholder="Postar sua resposta"
-                onSubmit={handleSendReply}
+                // onSubmit={handleSendReply}
+                tweetId={tweetId}
             />
 
-            <WrapperReactions style={{ color: isLiked ? '#F91880' : 'inherit' }}>
-                <ReactionLike onClick={() => toggleLike(tweetId)} />
+            <WrapperReactions onClick={handleLikeClick} style={{ color: isLiked ? '#F91880' : 'inherit' }}>
+                <ReactionLike />
                 <span>{likes?.length || 0}</span>
             </WrapperReactions>
 
@@ -106,8 +121,8 @@ export function TweetReactions({ tweetId, authorId, content, likes, $textReplay,
                 )}
             </WrapperReactions>
             <WrapperReactions>
-                {isMyTweet? (
-                    <ReactionPencil 
+                {isMyTweet ? (
+                    <ReactionPencil
                         onClick={handleEdit}
                     />
                 ) : (
