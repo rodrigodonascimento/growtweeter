@@ -38,7 +38,10 @@ export function MyLikes() {
                         $textReplay={"1"}
                         $textLike={"10"}
                         $textGraphLine={"1.500"}
-                    />
+                        tweetId={""}
+                        authorId={""} 
+                        content={""} 
+                        likes={[]}                    />
                 </div>
             </Wrapper>
         </TweetWrapper>

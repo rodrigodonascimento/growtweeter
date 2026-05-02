@@ -80,6 +80,7 @@ export function MyTweets() {
                         onDelete={() => handleDelete(t.id)}
                         onUpdate={handleActionSuccess}
                         onAddReply={handleActionSuccess}
+
                     />
                 ))
             ) : (
