@@ -46,7 +46,7 @@ export function SideBar() {
             tweetService.createTweet(tweetWhitAuthor, token);
             setIsPostOpen(false);
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+             
         } catch (error: any) {
             const msg = error.response?.data?.message || "Erro ao publicar o tweet";
             console.error(msg);

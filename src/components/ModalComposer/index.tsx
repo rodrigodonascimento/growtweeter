@@ -10,6 +10,7 @@ interface ModalComposerProps {
     buttonLabel: string;
     placeholder?: string;
     tweetId?: string;
+    onSubmit?: (text: string) => Promise<void>;
 }
 
 export function ModalComposer({ isOpen, onClose, buttonLabel, placeholder, tweetId }: ModalComposerProps) {

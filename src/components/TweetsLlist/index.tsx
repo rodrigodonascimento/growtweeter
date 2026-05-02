@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useTweets } from "../../hooks/useTweets";
 import { Tweet } from "../Tweet";
 import { useEffect } from "react";

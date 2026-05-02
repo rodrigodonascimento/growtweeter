@@ -31,7 +31,7 @@ export function ExploreUsers() {
                 const followingList = myFollowsRes.data?.followings || [];
 
                 // Criamos um Set de IDs para facilitar o filtro
-                const followingIds = new Set(followingList.map((f: any) => f.id));
+                new Set(followingList.map((f: any) => f.id));
 
                 // Filtramos: remove você mesmo E remove quem você já segue
                 const filtered = userList.filter((u: UserInterface) => {

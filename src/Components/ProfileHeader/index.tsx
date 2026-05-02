@@ -10,7 +10,6 @@ import { ProfileUsername } from "../ProfileUsername";
 import { FeedNav } from "../FeedNav";
 import { FeedNavLink } from "../FeedNavLink";
 import { useAuth } from "../../hooks/useAuth";
-import { useTweets } from "../../hooks/useTweets";
 import { userService } from "../../services/user.service";
 import { followService, tweetService } from "../../services/tweet.service";
 // Importe seus estilos abaixo...
@@ -19,7 +18,6 @@ export function ProfileHeader() {
     const { userId } = useParams(); // ID da URL (ex: /profile/123)
     const navigate = useNavigate();
     const { user: loggedUser, token } = useAuth(); // Você logado
-    const { tweets } = useTweets();
 
     // Estado local para dados de terceiros
     const [stats, setStats] = useState({ followers: 0, following: 0 });

@@ -6,7 +6,6 @@ import { PiEye } from "react-icons/pi";
 import { ImSpinner9 } from "react-icons/im";
 import { ModalComposerSignup } from './../ModalComposerSignup/index';
 import type { RegisterUserInterface } from "../../types/auth";
-import { authService } from './../../services/auth.service';
 import { useAuth } from "../../hooks/useAuth";
 
 export function Login() {
@@ -30,7 +29,7 @@ export function Login() {
             await signIn({ username, password });
 console.log("Login ok, tentando navegar...");
             window.location.replace('/');
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+             
         } catch (error: any) {
             // alert("Erro ao entrar. Verifique suas credenciais.");
             console.error("Erro detalhado:", error.response?.data || error.message);
@@ -44,7 +43,7 @@ console.log("Login ok, tentando navegar...");
         try {
             await signUp(dataRegister);
             navigate('/login');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         } catch (error: any) {
             const msg = error.response?.data?.message || "Erro ao cadastrar.";
             alert(msg);

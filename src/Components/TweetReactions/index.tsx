@@ -12,7 +12,7 @@ interface TweetReactionsProps {
     likes: LikeInterface[];
     $textReplay: string;
     $textLike: string;
-    $showTrashIcon?:boolean;
+    $showTrashIcon?: boolean;
     $textGraphLine: string;
     onLike?: () => void;
     onUnlike?: () => void;
@@ -20,10 +20,9 @@ interface TweetReactionsProps {
     onReply?: () => void;
     onEdit?: () => void;
     onUpdate?: (updateTweet: TweetInterface) => void;
-    onAddReply?: (newReply: TweetInterface) => void;
 }
 
-export function TweetReactions({ tweetId, authorId, content, likes, $textReplay, $textGraphLine, onUpdate, onLike, onUnlike, onDelete, onAddReply }: TweetReactionsProps) {
+export function TweetReactions({ tweetId, authorId, content, likes, $textReplay, $textGraphLine, onUpdate, onLike, onUnlike, onDelete }: TweetReactionsProps) {
 
     const { user, token } = useAuth();
     const isLiked = likes?.some(like => like.author?.id === user?.id);
@@ -39,32 +38,6 @@ export function TweetReactions({ tweetId, authorId, content, likes, $textReplay,
 
     // Só mostra icone de lixeira se tweet do usuario
     const isMyTweet = user?.id === authorId;
-
-    async function handleSendReply(text: string) {
-        if (!token || !user) return;
-        try {
-            // Envia para a API
-            const response = await tweetService.createReply({ content: text, replyTo: tweetId }, token);
-            const newReply: TweetInterface = {
-                id: response.data.id,
-                content: text,
-                type: 'REPLY',
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                author: user,
-                replies: [],
-                likes: []
-            }
-            onAddReply?.(newReply);
-            setIsReplayOpen(false);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-            const msg = error.response?.data?.message || "Erro ao responder";
-            alert(msg);
-            throw error;
-        }
-    }
-
 
     const handleEdit = async () => {
         if (!token) return;
@@ -97,7 +70,6 @@ export function TweetReactions({ tweetId, authorId, content, likes, $textReplay,
                 onClose={() => setIsReplayOpen(false)}
                 buttonLabel="Responder"
                 placeholder="Postar sua resposta"
-                // onSubmit={handleSendReply}
                 tweetId={tweetId}
             />
 
