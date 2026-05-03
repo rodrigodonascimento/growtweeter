@@ -13,7 +13,7 @@ export const DefaultLayoutStyle = styled.main`
 export const MainContent = styled.main`
     flex: 1;
     max-width: 600px;
-    min-height: 100vh;
+    height: 100vh;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
