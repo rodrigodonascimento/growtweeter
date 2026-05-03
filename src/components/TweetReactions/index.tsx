@@ -14,6 +14,7 @@ interface TweetReactionsProps {
     $textLike: string;
     $showTrashIcon?: boolean;
     $textGraphLine: string;
+    hideReply?: boolean;
     onLike?: () => void;
     onUnlike?: () => void;
     onDelete?: () => void;
@@ -22,7 +23,7 @@ interface TweetReactionsProps {
     onUpdate?: (updateTweet: TweetInterface) => void;
 }
 
-export function TweetReactions({ tweetId, authorId, content, likes, $textReplay, $textGraphLine, onUpdate, onLike, onUnlike, onDelete }: TweetReactionsProps) {
+export function TweetReactions({ tweetId, authorId, content, likes, $textReplay, $textGraphLine, hideReply, onUpdate, onLike, onUnlike, onDelete }: TweetReactionsProps) {
 
     const { user, token } = useAuth();
     const isLiked = likes?.some(like => like.author?.id === user?.id);
@@ -60,18 +61,22 @@ export function TweetReactions({ tweetId, authorId, content, likes, $textReplay,
 
     return (
         <ContainerReactions>
-            <WrapperReactions>
-                <ReactionReplay onClick={() => setIsReplayOpen(true)} style={{ cursor: 'pointer' }} />
-                <span>{$textReplay}</span>
-            </WrapperReactions>
+            {!hideReply && (
+                <>
+                    <WrapperReactions>
+                        <ReactionReplay onClick={() => setIsReplayOpen(true)} style={{ cursor: 'pointer' }} />
+                        <span>{$textReplay}</span>
+                    </WrapperReactions>
 
-            <ModalComposer
-                isOpen={isReplayOpen}
-                onClose={() => setIsReplayOpen(false)}
-                buttonLabel="Responder"
-                placeholder="Postar sua resposta"
-                tweetId={tweetId}
-            />
+                    <ModalComposer
+                        isOpen={isReplayOpen}
+                        onClose={() => setIsReplayOpen(false)}
+                        buttonLabel="Responder"
+                        placeholder="Postar sua resposta"
+                        tweetId={tweetId}
+                    />
+                </>
+            )}
 
             <WrapperReactions onClick={handleLikeClick} style={{ color: isLiked ? '#F91880' : 'inherit' }}>
                 <ReactionLike />

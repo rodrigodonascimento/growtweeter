@@ -27,7 +27,6 @@ export function Tweet({ tweetData, isReply = false, onDelete, onUpdate, onAddRep
 
     const formattedDate = formatRelativeDate(tweetData.createdAt);
 
-    // Verifica se o tweet deve mostar a linha vertical se reply
     const showVerticalLine = isReply || (tweetData.replies && tweetData.replies.length > 0);
 
     const localLike = () => likeTweet(tweetData.id);
@@ -53,14 +52,13 @@ export function Tweet({ tweetData, isReply = false, onDelete, onUpdate, onAddRep
                         tweetId={tweetData.id}
                         authorId={tweetData.author.id}
                         likes={tweetData.likes}
-                        // onLike={onLike}
-                        // onUnlike={onUnlike}
                         onDelete={onDelete}
                         onUpdate={onUpdate}
                         content={tweetData.content}
+                        hideReply={tweetData.type === 'REPLY'}
                         $textReplay={tweetData.replies?.length.toString() || '0'}
                         $textGraphLine={"1.500"}
-                        onLike={onLike || localLike} // Usa a prop ou a local
+                        onLike={onLike || localLike}
                         onUnlike={onUnlike || localUnlike}
                         onAddReply={(newReply: TweetInterface) => onAddReply?.(tweetData.id, newReply)} 
                         $textLike={""}                    />

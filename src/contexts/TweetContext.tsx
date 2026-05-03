@@ -2,7 +2,6 @@ import { createContext, useCallback, useState, type ReactNode } from "react";
 import type { LikeInterface, TweetInterface } from "../types/tweets";
 import { useAuth } from "../hooks/useAuth";
 import { likeService, tweetService } from "../services/tweet.service";
-import { api } from "../services/api";
 
 interface TweetContextData {
     tweets: TweetInterface[];
@@ -104,7 +103,6 @@ export function TweetProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    // Curtir Tweet
     const deleteTweet = async (tweetId: string): Promise<boolean> => {
         if (!token) return false;
         try {
@@ -118,60 +116,53 @@ export function TweetProvider({ children }: { children: ReactNode }) {
     };
 
     const createReply = async (text: string, tweetId: string): Promise<boolean> => {
-    if (!token || !user) return false;
+        if (!token || !user) return false;
 
-    try {
-        // 1. Chamada para a API
-        const response = await api.post('/replies', {
-            content: text, // Enviando 'text' como 'content' para a API
-            replyTo: tweetId 
-        }, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+        try {
+            const response = await tweetService.createReply({
+                content: text,
+                replyTo: tweetId
+            }, token);
 
-        // 2. Extração correta: A API retorna { data: { id, content, ... } }
-        // Se response.data.data não existir, usamos o 'text' que o usuário digitou
-        const replyInfo = response.data.data;
+            const replyInfo = response.data;
 
-        const newReply: TweetInterface = {
-            id: replyInfo?.id || Math.random().toString(), // Garante id para a 'key'
-            content: replyInfo?.content || text,           // Fallback para o texto digitado
-            type: 'REPLY',
-            createdAt: replyInfo?.createdAt || new Date().toISOString(),
-            updatedAt: replyInfo?.updatedAt || new Date().toISOString(),
-            author: {
-                id: user.id,
-                name: user.name,
-                username: user.username,
-                imageUrl: user.imageUrl || ''
-            },
-            replies: [], 
-            likes: []    
-        };
-
-        // 3. Atualização do estado global
-        setTweets(prevTweets => prevTweets.map(tweet => {
-            if (tweet.id === tweetId) {
-                return {
-                    ...tweet,
-                    replies: [...(tweet.replies || []), newReply]
-                };
-            }
-            // Importante: se o reply for para outro reply, precisamos buscar nos níveis abaixo
-            return {
-                ...tweet,
-                replies: tweet.replies.map(r => 
-                    r.id === tweetId ? { ...r, replies: [...r.replies, newReply] } : r
-                )
+            const newReply: TweetInterface = {
+                id: replyInfo.id,
+                content: replyInfo.content,
+                type: 'REPLY',
+                createdAt: replyInfo.createdAt,
+                updatedAt: replyInfo.updatedAt,
+                author: {
+                    id: user.id,
+                    name: user.name,
+                    username: user.username,
+                    imageUrl: user.imageUrl || ''
+                },
+                replies: [],
+                likes: []
             };
-        }));
 
-        return true;
-    } catch (error) {
-        console.error("Erro ao realizar reply", error);
-        return false;
-    }
-};
+            setTweets(prevTweets => prevTweets.map(tweet => {
+                // Se o ID do tweet for o que acabamos de responder, adiciona o novo reply na lista dele
+                if (tweet.id === tweetId) {
+                    return {
+                        ...tweet,
+                        replies: [newReply, ...(tweet.replies || [])]
+                    };
+                }
+                // Se não for o tweet alvo, retorna ele sem alterações
+                return tweet;
+            }));
+
+
+            return true;
+        } catch (error: any) {
+            if (error.response?.data?.message === "Cannot reply to a reply") {
+                alert("Desculpe, a API não permite responder a uma resposta.");
+            }
+            return false;
+        }
+    };
 
 
     return (

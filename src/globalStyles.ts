@@ -9,8 +9,9 @@ export default createGlobalStyle`
 
     body, html {
         font-family: "Karla", sans-serif;
-        overflow-y: hidden;
-        height: 100vh;
+        overflow-x: hidden; 
+        overflow-y: auto;
+        min-height: 100%;
         background-color: ${props => props.theme.colors.backgroundColor};
     }
 `;

@@ -11,7 +11,7 @@ export const ContainerSideBar = styled.aside`
     justify-content: space-between;
     margin-top: 19px;
     width: 275px;
-    height: 100vh;
+    height: 700px;
     padding: 0 20px;
     margin-left: 0;
 `;
