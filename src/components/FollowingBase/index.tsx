@@ -1,47 +1,53 @@
+import { useEffect, useState } from "react";
 import { ProfileImage } from "../ProfileImage";
-import { ProfileName } from "../ProfileName";
-import { ProfileUsername } from "../ProfileUsername";
-import { ProfileWrapper } from "../ProfileWrapper";
-import { ProfileData, Wrapper } from "../Tweet/styles";
-import { TweetReactions } from "../TweetReactions";
-import { TweetText } from "../TweetText";
-import { TweetWrapper } from "../TweetWrapper";
+import { useAuth } from "../../hooks/useAuth";
+import { useNavigate } from "react-router";
+import { getMyFollows } from "../../services/follower.service";
+import type { UserInterface } from "../../types/auth";
+import { ExplorerUsersContainer, LinkToProfileUser, NameProfileUser, UsernameProfileUser } from "../ExplorerUsers/styles";
 
 export function FollowingBase() {
-    return (
-        <>
-            <TweetWrapper noBorder>
-                <ProfileWrapper>
-                    <ProfileImage />
-                </ProfileWrapper>
-                <Wrapper>
-                    <ProfileData>
-                        <ProfileName
-                            $name="Nome de Usuário"
-                        />
-                        <ProfileUsername
-                            $userName="@nomedousuario"
-                        />
-                    </ProfileData>
-                    <div>
-                        <TweetText
-                            $writeTweet="Esse é o novo Tweet Text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim, ligula nec tempus gravida, nulla massa vehicula purus, eget iaculis dui arcu ac quam. Aliquam ac lobortis justo."
-                        />
-                    </div>
-                    <div>
-                        <TweetReactions
-                            $showTrashIcon={false}
-                            $textReplay={"1.111"}
-                            $textLike={"1.111"}
-                            $textGraphLine={"215 mil"} 
-                            tweetId={""} 
-                            authorId={""} 
-                            content={""} 
-                            likes={[]}                        />
-                    </div>
-                </Wrapper>
-            </TweetWrapper>
-        </>
+    const [following, setFollowing] = useState<UserInterface[]>([]);
+    const {user: loggeduser, token} = useAuth();
+    const navigate = useNavigate();
 
+    useEffect(() => {
+        const loandFollowing = async () => {
+            if (!token || !loggeduser) return;
+
+            try {
+                const response = await getMyFollows(token);
+                const followingList = response.data?.followings || [];
+                const filtered = followingList.filter(u => u.id !== loggeduser.id);
+                setFollowing(filtered);
+            } catch (error) {
+                console.error("Erro ao carregar lista de seguidores:", error);
+            }
+        };
+        loandFollowing();
+    }, [token, loggeduser]);
+
+    return (
+        <ExplorerUsersContainer className="aba-seguindo">
+            {following.length > 0 ? (
+                following.map((u: UserInterface) => (
+                    <LinkToProfileUser
+                        key={u.id}
+                        onClick={() => navigate(`/profile/${u.id}`)}
+                    >
+                        <ProfileImage $urlImage={u.imageUrl} />
+                        <div>
+                            <NameProfileUser>{u.name}</NameProfileUser>
+                            <UsernameProfileUser>@{u.username}</UsernameProfileUser>
+                        </div>
+                    
+                    </LinkToProfileUser>
+                ))
+            ) : (
+                <p style={{padding: '20px', textAlign: 'center'}}>
+                    Você ainda não segue ninguém.
+                </p>
+            )}
+        </ExplorerUsersContainer>
     );
 }
